@@ -1,0 +1,25 @@
+﻿<BFUStack Horizontal="false" VerticalFill="true" Style="overflow:hidden;">
+    <BFUStackItem VerticalFill="true" Style="overflow-y:auto;">
+        <BFUNav>
+            <BFUNavLinkGroup Name="원신 도감" CollapseByDefault="true">
+                <BFUNavLink Name="캐릭터" Url="characterPage" Id="characterPage" OnClick="@OnLinkClicked" />
+            </BFUNavLinkGroup>
+            <BFUNavLink Name="GIDB 정보" Url="infoPage" Id="infoPage" OnClick="@OnLinkClicked" />
+        </BFUNav>
+    </BFUStackItem>
+</BFUStack>
+
+@code 
+{
+
+    [Parameter] public EventCallback<BFUNavLink> OnLinkClicked { get; set; }
+
+    bool collapseNavMenu = true;
+
+    string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

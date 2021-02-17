@@ -1,0 +1,14 @@
+<BFUTheme>
+    <BFULayerHost Style="display:flex; flex-direction: row;width:100vw">
+        <Router AppAssembly="typeof(MainLayout).Assembly">
+            <Found Context="routeData">
+                <BFUResponsiveCascader>
+                    <RouteView RouteData="routeData" DefaultLayout="@typeof(MainLayout)" />
+                </BFUResponsiveCascader>
+            </Found>
+            <NotFound>
+                <p>Page not found.</p>
+            </NotFound>
+        </Router>
+    </BFULayerHost>
+</BFUTheme>

@@ -1,0 +1,13 @@
+﻿@page "/indexPage"
+@page "/"
+
+<BFUStack HorizontalAlign="Alignment.Center" Style="width:100%">
+    <BFUText Style="font-size:xx-large; font-weight:bold; text-align:center">Welcom to GIDB</BFUText>
+    <BFUText Style="font-size:large; text-align:center">Click left navigation menu for more information</BFUText>
+</BFUStack>
+
+@code
+{
+    [Inject]
+    ThemeProvider ThemeProvider { get; set; }
+}
