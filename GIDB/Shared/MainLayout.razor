@@ -1,7 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Components
 @inherits LayoutComponentBase
 
-<BFUStack Horizontal="true" Style="width:100%;">
+@*<BFUStack Horizontal="true" Style="width:100%;">
     <BFUResponsiveLayout MinWidth="ResponsiveMode.Medium.ToMinCssValue()">
         <BFUStackItem Grow="0" DisableShrink="true" Style="height:100%;overflow:hidden;">
             <NavMenu />
@@ -36,7 +36,26 @@
 
     </BFUStackItem>
 
-</BFUStack>
+</BFUStack>*@
+
+<MudLayout>
+    <MudAppBar Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudAppBarSpacer />
+        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
+    </MudAppBar>
+    <MudDrawer @bind-Open="isPanelOpen" Elevation="2">
+        <MudDrawerHeader>
+            <MudText Typo="Typo.h5" Class="mt-1">Application</MudText>
+        </MudDrawerHeader>
+        <NavMenu OnLinkClicked=@OnNavLinkClick />
+    </MudDrawer>
+    <MudMainContent>
+        <BFUStackItem Grow="1" Tokens="new BFUStackItemTokens { Padding = ((int)CurrentMode <= (int)ResponsiveMode.Medium ? 10 : 20) }" Style="overflow-y:auto;">
+            @Body
+        </BFUStackItem>
+    </MudMainContent>
+</MudLayout>
 
 @code
 {
@@ -58,6 +77,11 @@
     void HideMenu()
     {
         isPanelOpen = false;
+    }
+
+    void DrawerToggle()
+    {
+        isPanelOpen = !isPanelOpen;
     }
 
     void OnNavLinkClick(BFUNavLink linkBase)

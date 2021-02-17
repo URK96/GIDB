@@ -1,8 +1,158 @@
 ﻿@page "/characterPage"
 
+@using GenshinDB_Core
+@using System.Collections.ObjectModel
+@using System.Collections.Specialized
 
+@using ElementTypes = GenshinDB_Core.Character.ElementTypes
+
+<BFUStack>
+    <BFUTextField Label="검색" Underlined="true" OnInput=@SearchTextField_OnInput/>
+
+    <BFULabel>원소 속성</BFULabel>
+    <BFUStack Horizontal="true">
+        <MudChipSet MultiSelection="true" Filter="true" SelectedChipsChanged=@ElementChipSet_SelectedChipsChanged>
+            @foreach (var value in System.Enum.GetValues(typeof(ElementTypes)))
+            {
+                <MudChip Text=@AppEnv.genshinDB.FindLangDic(System.Enum.GetName(typeof(ElementTypes), value)) Style=@GetElementChipColor(value)
+                         Tag=@value/>
+            }
+        </MudChipSet>
+    </BFUStack>
+
+    <MudGrid>
+        <MudItem xs="100">
+            <MudGrid Spacing="2" Justify="Justify.FlexStart">
+                @foreach (var item in ListItems)
+                {
+                    <MudItem>
+                        <MudCard>
+                            <MudCardMedia Image=@($"/images/character/icon/Character_{item.Name}_Thumb.png") Height="100"/>
+                            <MudCardContent>
+                                <BFUStack HorizontalAlign="Alignment.Center">
+                                    <BFUImage Src=@($"/images/character/icon/Character_{item.Name}_Thumb.png") />
+                                    <BFULabel>@AppEnv.genshinDB.FindLangDic(item.Name)</BFULabel>
+                                </BFUStack>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudItem>
+                }
+            </MudGrid>
+        </MudItem>
+    </MudGrid>
+
+</BFUStack>
 
 @code 
 {
+    public List<GenshinDB_Core.Character> ListItems { get; set; }
 
+    bool applyElementFilter = false;
+    public bool[] ElementFilter;
+
+    string searchText = "";
+
+    protected override Task OnInitializedAsync()
+    {
+        ListItems = new List<GenshinDB_Core.Character>();
+
+        ResetFilter();
+        ListCharacter();
+
+        return base.OnInitializedAsync();
+    }
+
+    private void ResetElementFilter() => ElementFilter = new bool[System.Enum.GetValues(typeof(GenshinDB_Core.Character.ElementTypes)).Length];
+
+    private void ResetFilter()
+    {
+        ResetElementFilter();
+    }
+
+    private void ListCharacter()
+    {
+        ListItems.Clear();
+
+        applyElementFilter = ElementFilter.Any(x => x);
+
+        foreach (var item in AppEnv.genshinDB.characters)
+        {
+            if (string.IsNullOrWhiteSpace(searchText) ||
+                (CheckName(item.Name, searchText) && CheckFiltering(item)))
+            {
+                ListItems.Add(item);
+
+                continue;
+            }
+        }
+    }
+
+    private bool CheckName(string cName, string searchText)
+    {
+        Console.WriteLine($"Search : {searchText}");
+
+        if (string.IsNullOrWhiteSpace(searchText))
+        {
+            return true;
+        }
+
+        var lang = AppEnv.genshinDB.langs.Find(x => x.Name.Equals(cName));
+
+        foreach (var value in lang.Dic.Values)
+        {
+            if (value.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private bool CheckFiltering(GenshinDB_Core.Character character)
+    {
+        if (applyElementFilter && !ElementFilter[(int)character.ElementType])
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    private string GetElementChipColor(object value)
+    {
+        var bgColor = (ElementTypes)value switch
+        {
+            ElementTypes.Pyro => Colors.Red.Default,
+            ElementTypes.Hydro => Colors.Blue.Default,
+            ElementTypes.Dendro => Colors.Green.Default,
+            ElementTypes.Electro => Colors.Purple.Default,
+            ElementTypes.Anemo => Colors.Teal.Default,
+            ElementTypes.Cryo => Colors.LightBlue.Lighten4,
+            ElementTypes.Geo => Colors.Amber.Darken1,
+            _ => Colors.Grey.Darken1
+        };
+
+        return $"background-color:{bgColor}";
+    }
+
+    private void SearchTextField_OnInput(string text)
+    {
+        searchText = text;
+
+        ListCharacter();
+    }
+
+    private void ElementChipSet_SelectedChipsChanged(MudChip[] mudChips)
+    {
+        ResetElementFilter();
+
+        foreach (var chip in mudChips)
+        {
+            ElementFilter[(int)chip.Tag] = true;
+        }
+
+        ListCharacter();
+    }
 }
+
