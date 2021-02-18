@@ -1,0 +1,24 @@
+﻿@page "/characterPage/detail/{Name}/{EType:int}" 
+
+@using ElementType = GenshinDB_Core.Character.ElementTypes
+@using GICharacter = GenshinDB_Core.Character
+
+
+<BFULabel>@character</BFULabel>
+
+@code 
+{
+    [Parameter]
+    public string Name { get; set; }
+    [Parameter]
+    public int EType { get; set; }
+
+    private GICharacter character;
+
+    protected override Task OnInitializedAsync()
+    {
+        character = AppEnv.genshinDB.characters.Find(x => x.Name.Equals(Name) && x.ElementType.Equals((ElementType)EType));
+
+        return base.OnInitializedAsync();
+    }
+}

@@ -1,44 +1,41 @@
 ﻿@page "/characterPage"
 
 @using GenshinDB_Core
-@using System.Collections.ObjectModel
-@using System.Collections.Specialized
 
 @using ElementTypes = GenshinDB_Core.Character.ElementTypes
 
+@inject NavigationManager NavigationManager
+
 <BFUStack>
-    <BFUTextField Label="검색" Underlined="true" OnInput=@SearchTextField_OnInput/>
+    <BFUTextField Label="검색" Underlined="true" OnInput=@SearchTextField_OnInput />
 
     <BFULabel>원소 속성</BFULabel>
     <BFUStack Horizontal="true">
         <MudChipSet MultiSelection="true" Filter="true" SelectedChipsChanged=@ElementChipSet_SelectedChipsChanged>
             @foreach (var value in System.Enum.GetValues(typeof(ElementTypes)))
             {
-                <MudChip Text=@AppEnv.genshinDB.FindLangDic(System.Enum.GetName(typeof(ElementTypes), value)) Style=@GetElementChipColor(value)
-                         Tag=@value/>
+                <MudChip Text=@AppEnv.genshinDB.FindLangDic(System.Enum.GetName(typeof(ElementTypes), value)) Style=@GetElementChipColor(value) Tag=@value />
             }
         </MudChipSet>
     </BFUStack>
 
-    <MudGrid>
-        <MudItem xs="100">
-            <MudGrid Spacing="2" Justify="Justify.FlexStart">
-                @foreach (var item in ListItems)
-                {
-                    <MudItem>
-                        <MudCard>
-                            <MudCardMedia Image=@($"/images/character/icon/Character_{item.Name}_Thumb.png") Height="100"/>
-                            <MudCardContent>
-                                <BFUStack HorizontalAlign="Alignment.Center">
-                                    <BFUImage Src=@($"/images/character/icon/Character_{item.Name}_Thumb.png") />
-                                    <BFULabel>@AppEnv.genshinDB.FindLangDic(item.Name)</BFULabel>
-                                </BFUStack>
-                            </MudCardContent>
-                        </MudCard>
-                    </MudItem>
-                }
-            </MudGrid>
-        </MudItem>
+    <MudGrid Spacing="2" Justify="Justify.FlexStart" Style="margin-top:10px">
+        @foreach (var item in ListItems)
+        {
+            <MudItem>
+                <MudButton OnClick=@(() => GoCharacterDetail(item))>
+                    <MudCard>
+                        <MudCardContent>
+                            <BFUStack HorizontalAlign="Alignment.Center">
+                                <BFUImage Src=@($"/images/character/icon/Character_{item.Name}_Thumb.png") />
+                                <BFULabel>@AppEnv.genshinDB.FindLangDic(item.Name)</BFULabel>
+                                <BFUImage Width="30" Src=@($"/images/element/icon/Element_{elementNames[(int)item.ElementType]}.png") />
+                            </BFUStack>
+                        </MudCardContent>
+                    </MudCard>
+                </MudButton>
+            </MudItem>
+        }
     </MudGrid>
 
 </BFUStack>
@@ -49,6 +46,8 @@
 
     bool applyElementFilter = false;
     public bool[] ElementFilter;
+
+    public readonly string[] elementNames = System.Enum.GetNames(typeof(ElementTypes));
 
     string searchText = "";
 
@@ -77,8 +76,7 @@
 
         foreach (var item in AppEnv.genshinDB.characters)
         {
-            if (string.IsNullOrWhiteSpace(searchText) ||
-                (CheckName(item.Name, searchText) && CheckFiltering(item)))
+            if (CheckName(item.Name, searchText) && CheckFiltering(item))
             {
                 ListItems.Add(item);
 
@@ -154,5 +152,9 @@
 
         ListCharacter();
     }
-}
 
+    private void GoCharacterDetail(GenshinDB_Core.Character character)
+    {
+        NavigationManager.NavigateTo($"/characterPage/detail/{character.Name}/{(int)character.ElementType}");
+    }
+}

@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using MudBlazor.Services;
+using System.Globalization;
 
 namespace GIDB
 {
@@ -26,7 +27,7 @@ namespace GIDB
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
-            AppEnvironment.genshinDB = new GenshinDB_Core.GenshinDB();
+            AppEnvironment.genshinDB = new GenshinDB_Core.GenshinDB(CultureInfo.GetCultureInfo("ko-KR"));
 
             await builder.Build().RunAsync();
         }
