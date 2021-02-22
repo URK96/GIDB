@@ -1,7 +1,5 @@
 ﻿@page "/characterPage"
 
-@using GenshinDB_Core
-
 @using ElementTypes = GenshinDB_Core.Character.ElementTypes
 
 @inject NavigationManager NavigationManager
@@ -61,7 +59,7 @@
         return base.OnInitializedAsync();
     }
 
-    private void ResetElementFilter() => ElementFilter = new bool[System.Enum.GetValues(typeof(GenshinDB_Core.Character.ElementTypes)).Length];
+    private void ResetElementFilter() => ElementFilter = new bool[System.Enum.GetValues(typeof(ElementTypes)).Length];
 
     private void ResetFilter()
     {

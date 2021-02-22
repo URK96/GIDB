@@ -3,8 +3,49 @@
 @using ElementType = GenshinDB_Core.Character.ElementTypes
 @using GICharacter = GenshinDB_Core.Character
 
+@inject NavigationManager NavigationManager
 
-<BFULabel>@character</BFULabel>
+<link href="https://use.fontawesome.com/releases/v5.14.0/css/all.css" rel="stylesheet">
+
+<BFUActionButton IconName="Back" OnClick=@(() => Back_OnClick())/>
+
+<div style="z-index:1;">
+    <img style="left:50%; transform:translateX(-50%); position:absolute; max-width:100vw" src=@($"/images/character/full/Character_{Name}.png") />
+</div>
+
+<MudContainer MaxWidth="MaxWidth.Large" Style="z-index:0; position:relative; height:100vh">
+    <MudPaper Style="padding:20px; margin-top:40vh;">
+        <BFUStack Horizontal="true">
+            <MudText Typo="Typo.h4">@AppEnv.genshinDB.FindLangDic(Name)</MudText>
+            <BFUImage Width="40" Style="margin-left:5px;" Src=@($"/images/element/icon/Element_{System.Enum.GetNames(typeof(ElementType))[EType]}.png") />
+            <BFUImage Width="40" Style="margin-left:5px; background-color:dimgray; border-radius:50%;" Src=@($"/images/weapon/typeicon/{character.WeaponType.Name}.png") />
+        </BFUStack>
+        <BFUPivot>
+            <BFUPivotItem HeaderText="기본 정보">
+                <MudList>
+                    <MudListItem Avatar="@Icons.Material.Filled.LocationOn">몬드</MudListItem>
+                    <MudDivider DividerType="DividerType.Inset" />
+                    <MudListItem Avatar="fas fa-venus-mars">남</MudListItem>
+                    <MudDivider DividerType="DividerType.Inset" />
+                    <MudListItem Avatar="fas fa-birthday-cake">07/25</MudListItem>
+                </MudList>
+            </BFUPivotItem>
+            <BFUPivotItem HeaderText="육성">
+
+            </BFUPivotItem>
+            <BFUPivotItem HeaderText="스킬">
+
+            </BFUPivotItem>
+            <BFUPivotItem HeaderText="특성">
+
+            </BFUPivotItem>
+            <BFUPivotItem HeaderText="별자리">
+
+            </BFUPivotItem>
+        </BFUPivot>
+    </MudPaper>
+</MudContainer>
+
 
 @code 
 {
@@ -20,5 +61,10 @@
         character = AppEnv.genshinDB.characters.Find(x => x.Name.Equals(Name) && x.ElementType.Equals((ElementType)EType));
 
         return base.OnInitializedAsync();
+    }
+
+    private void Back_OnClick()
+    {
+        NavigationManager.NavigateTo($"/characterPage/");
     }
 }
